@@ -12,14 +12,14 @@ class SoundDirector{
   constructor(){
     const remembered=storage.get('navin-sound-mode',storage.get('navin-v3-sound')==='yes'?'full':'off');
     this.mode=remembered==='off'?'off':'full';
-    this.volume=Math.max(.68,Math.min(1,Number(storage.get('navin-sound-volume','.68'))||.68));
+    this.volume=1;
     this.ctx=null;this.master=null;this.lastHover=0;this.scrollStep=0;this.pulseTimer=null;
   }
   ensure(){
     if(!this.ctx){
       const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
-      this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=this.volume*.30;
-      const compressor=this.ctx.createDynamicsCompressor();compressor.threshold.value=-16;compressor.knee.value=18;compressor.ratio.value=5;compressor.attack.value=.003;compressor.release.value=.2;
+      this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=this.volume*1;
+      const compressor=this.ctx.createDynamicsCompressor();compressor.threshold.value=-20;compressor.knee.value=16;compressor.ratio.value=8;compressor.attack.value=.002;compressor.release.value=.18;
       this.master.connect(compressor);compressor.connect(this.ctx.destination);
     }
     if(this.ctx.state==='suspended')this.ctx.resume().catch(()=>{});
@@ -89,8 +89,9 @@ function syncSoundUI(){
 
 function bindGlobalSounds(){
   let lastY=scrollY,lastTickY=scrollY;
-  window.addEventListener('scroll',()=>{const y=scrollY;if(Math.abs(y-lastTickY)>=145){sounds.scroll(y>lastY?1:-1);lastTickY=y}lastY=y},{passive:true});
+  window.addEventListener('scroll',()=>{const y=scrollY;if(Math.abs(y-lastTickY)>=110){sounds.scroll(y>lastY?1:-1);lastTickY=y}lastY=y},{passive:true});
   document.addEventListener('portfolio:deckchange',e=>sounds.swipe(Math.sign(e.detail?.delta||1)));
+  document.addEventListener('portfolio:methodchange',e=>sounds.swipe(Math.sign(e.detail?.direction||1)));
   document.addEventListener('click',e=>{const target=e.target.closest('a,button,[role="button"]');if(!target||target.id==='sound-toggle'||target.closest('.main-character,.page-mascot'))return;sounds.click()});
   document.addEventListener('pointerover',e=>{const target=e.target.closest('a,button,.shuffle-card,.library-tile');if(target&&!target.contains(e.relatedTarget))sounds.hover()});
   document.addEventListener('portfolio:legacy-chime',e=>{if(sounds.mode!=='off')sounds.tone(e.detail?.frequency||520,.08,{to:(e.detail?.frequency||520)*1.12,level:.06})});
