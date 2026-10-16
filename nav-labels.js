@@ -1,0 +1,1 @@
+(()=>{const labels=["The Hall of Fame","Client Multiverse","How I Cook","The Main Suspect","Let's Cook"];function apply(){document.querySelectorAll("#navigation a").forEach((a,i)=>{if(labels[i])a.textContent=labels[i]})}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",apply,{once:true});else apply()})();

@@ -1,0 +1,43 @@
+/* AB Bricks homepage composition: preserve the approved copy-left, artwork-right layout
+   even after Genexplore is removed from the featured-client sequence. */
+@media (min-width:801px){
+  .takeover[aria-labelledby="client-ab"]{
+    grid-template-columns:minmax(0,1fr) minmax(350px,.85fr);
+  }
+  .takeover[aria-labelledby="client-ab"] .takeover-copy{grid-column:1;grid-row:1}
+  .takeover[aria-labelledby="client-ab"] .takeover-art{grid-column:2;grid-row:1}
+}
+
+/* The two AB Bricks story notes sit in their own top row, ABOVE the
+   picture frames. Neither sticker obscures the Final Mark or Tough Enough art. */
+.takeover[aria-labelledby="client-ab"] .takeover-art .floating-note{
+  top:0;
+  bottom:auto;
+  box-sizing:border-box;
+  width:45%;
+  max-width:45%;
+  min-height:0;
+  padding:10px 12px;
+  text-align:center;
+  white-space:normal;
+  line-height:1.25;
+}
+.takeover[aria-labelledby="client-ab"] .takeover-art .note-a{
+  left:0;
+  right:auto;
+  transform:rotate(-3deg);
+}
+.takeover[aria-labelledby="client-ab"] .takeover-art .note-b{
+  left:auto;
+  right:0;
+  transform:rotate(3deg);
+}
+@media (max-width:520px){
+  .takeover[aria-labelledby="client-ab"] .takeover-art .floating-note{
+    width:45%;
+    max-width:45%;
+    padding:7px 6px;
+    font-size:9px;
+    letter-spacing:.08em;
+  }
+}

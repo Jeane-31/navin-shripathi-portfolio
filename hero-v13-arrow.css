@@ -1,0 +1,32 @@
+/* V13 — hand-crafted SVG curve, aligned to the interest line. */
+.home-hero-editorial .approved-hero-title .hero-crafted-arrow {
+  position:absolute;
+  z-index:5;
+  left:calc(100% + .07em);
+  top:.10em;
+  width:clamp(70px,7.3vw,116px);
+  height:clamp(74px,7.2vw,110px);
+  display:block;
+  overflow:visible;
+  pointer-events:none;
+}
+.home-hero-editorial .approved-hero-title .hero-crafted-arrow path {
+  fill:none;
+  stroke:#7730c8;
+  stroke-width:4.2px;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+}
+@media(max-width:520px){
+  .home-hero-editorial .approved-hero-title .hero-crafted-arrow {
+    left:calc(100% + .02em);
+    top:.06em;
+    width:65px;
+    height:54px;
+  }
+  .home-hero-editorial .approved-hero-title .hero-crafted-arrow path {stroke-width:3.2px}
+}
+@media(max-width:355px){
+  .home-hero-editorial .approved-hero-title .hero-crafted-arrow{width:57px;height:49px}
+}

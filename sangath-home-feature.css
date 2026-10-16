@@ -1,0 +1,33 @@
+/* Homepage Sangath takeover only: square logo hero + portrait reel mini-frame.
+   Individual Sangath project creatives and every other featured brand are untouched. */
+.takeover[aria-labelledby="client-sangath"] .takeover-art .media-stage.primary{
+  position:absolute;
+  left:15%;top:14%;right:auto;bottom:auto;
+  width:min(63%,390px);max-height:none;
+  padding:15px;
+  z-index:2;
+}
+.takeover[aria-labelledby="client-sangath"] .takeover-art .media-stage.secondary{
+  position:absolute;
+  left:-1%;right:auto;top:auto;bottom:2.5%;
+  width:min(32%,185px);max-height:none;
+  padding:10px;
+  z-index:3;
+}
+.takeover[aria-labelledby="client-sangath"] .media-stage.secondary .video-surface,
+.takeover[aria-labelledby="client-sangath"] .media-stage.secondary video{
+  max-height:230px;
+}
+@media(max-width:800px){
+  .takeover[aria-labelledby="client-sangath"] .takeover-art{min-height:430px}
+  .takeover[aria-labelledby="client-sangath"] .takeover-art .media-stage.primary{left:16%;top:12%;width:min(70%,300px);padding:12px}
+  .takeover[aria-labelledby="client-sangath"] .takeover-art .media-stage.secondary{left:4%;bottom:4.5%;width:min(42%,180px);padding:8px}
+  .takeover[aria-labelledby="client-sangath"] .media-stage.secondary .video-surface,
+  .takeover[aria-labelledby="client-sangath"] .media-stage.secondary video{max-height:190px}
+}
+@media(max-width:520px){
+  .takeover[aria-labelledby="client-sangath"] .takeover-art .media-stage.primary{left:15%;width:min(71%,280px)}
+  .takeover[aria-labelledby="client-sangath"] .takeover-art .media-stage.secondary{left:1%;bottom:4.5%;width:min(46%,170px)}
+  .takeover[aria-labelledby="client-sangath"] .media-stage.secondary .video-surface,
+  .takeover[aria-labelledby="client-sangath"] .media-stage.secondary video{max-height:180px}
+}

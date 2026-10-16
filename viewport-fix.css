@@ -1,0 +1,93 @@
+/* V6 — viewport-safe editorial scenes. Keep every word and full original artwork visible. */
+@media (min-width: 801px) {
+  .takeover,
+  .takeover:nth-of-type(even) {
+    min-height: calc(100svh - 68px);
+    padding-top: clamp(28px, 4.2svh, 58px);
+    padding-bottom: clamp(28px, 4.2svh, 58px);
+    gap: clamp(24px, 3vw, 42px);
+  }
+  .takeover .feature-meta {
+    font-size: 10px;
+    margin-bottom: 10px;
+    gap: 12px;
+  }
+  .takeover .feature-client {
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: .11em;
+    margin: 0 0 12px;
+    max-width: none;
+  }
+  .takeover h3 {
+    font-size: clamp(44px, min(5.3vw, 8.5svh), 82px);
+    line-height: .96;
+    margin: 0 0 16px;
+    letter-spacing: -.065em;
+  }
+  .takeover h3 em {line-height: .97}
+  .takeover .takeover-dek {
+    font-size: clamp(15px, 1.25vw, 19px);
+    line-height: 1.42;
+    margin: 0 0 10px;
+    max-width: 580px;
+  }
+  .takeover .takeover-mini {
+    font-size: clamp(12px, .95vw, 14px);
+    line-height: 1.45;
+    margin: 0 0 15px;
+    max-width: 580px;
+  }
+  .takeover .feature-pills {margin-bottom: 16px;gap:7px}
+  .takeover .feature-pills span {font-size: 10px; padding: 7px 10px}
+  .takeover .feature-link {font-size: 12px}
+  .takeover .takeover-art {
+    min-height: 0;
+    height: min(66svh, 520px);
+    align-self: center;
+  }
+  .takeover .media-stage.primary {max-height: min(46svh, 410px)}
+  .takeover .media-stage.secondary {max-height: min(33svh, 285px)}
+  .takeover .media-stage img, .takeover .media-stage video {
+    max-height: inherit;
+    object-fit: contain;
+  }
+}
+@media (min-width:801px) and (max-height:720px) {
+  .takeover,.takeover:nth-of-type(even){padding-top:22px;padding-bottom:22px}
+  .takeover .feature-meta{margin-bottom:8px}
+  .takeover .feature-client{margin-bottom:8px}
+  .takeover h3 {font-size:clamp(40px,min(5vw,8svh),64px);margin-bottom:11px}
+  .takeover .takeover-dek{font-size:15px;margin-bottom:7px}
+  .takeover .takeover-mini{font-size:12px;margin-bottom:9px}
+  .takeover .feature-pills{margin-bottom:10px}
+  .takeover .takeover-art{height: min(64svh, 450px)}
+  .story-sticky{min-height:0}
+  .story-panel{padding-block:clamp(14px,2.2svh,26px)}
+  .scene-copy h1,.scene-copy h2{font-size:clamp(34px,min(4.2vw,7.2svh),64px);margin:8px 0 12px}
+  .scene-copy p{font-size:clamp(14px,1.06vw,16px);line-height:1.46}
+  .scene-copy .scene-extra{font-size:13px;margin-top:11px}
+  .scene-copy .jump-note{margin-top:7px}
+  .art-image{max-height: min(52svh,480px)}
+  .art-image img,.art-image video{max-height:calc(min(52svh,480px) - 35px)}
+  .scene-gallery .work-thumbnail{max-height:50svh}
+  .scene-gallery .work-thumbnail img,.scene-gallery .work-thumbnail video{max-height:clamp(115px,27svh,280px)}
+  .method-art{height:65%}
+}
+@media (min-width:801px) and (max-height:620px) {
+  .takeover .takeover-mini {font-size:11px;line-height:1.25;margin-bottom:6px}
+  .takeover .feature-pills {margin-bottom:8px}
+  .takeover h3{font-size:clamp(38px,7svh,49px)}
+  .story-ui{height:56px;padding-block:8px}
+  .story-track{height:calc(100% - 56px)}
+  .story-panel{padding-block:12px}
+  .scene-copy h1,.scene-copy h2{font-size:clamp(30px,6svh,40px)}
+  .scene-copy p{font-size:13px;line-height:1.35}
+}
+@media (max-width:800px) {
+  /* Mobile remains a readable vertical document — nothing cut off by viewport-height constraints. */
+  .takeover .feature-client,.takeover .takeover-dek,.takeover .takeover-mini{max-width:100%}
+  .story-sticky{min-height:0}
+  .story-panel{overflow:visible;min-height:0}
+}
+html { overflow-x: clip; }

@@ -1,0 +1,53 @@
+/*
+Harihar × Sammoda: standard featured-section height and a compact lower card.
+This single stylesheet replaces the previous expanded-section and lowered-card patches.
+Never crop the campaign artwork.
+*/
+@media (min-width:1081px) {
+  .takeover[aria-labelledby="client-harihar"] {
+    padding-bottom:76px;
+    min-height:710px;
+  }
+  .takeover[aria-labelledby="client-harihar"] .v14-approval-art {min-height:520px;}
+}
+@media (min-width:801px) and (max-width:1080px) {
+  .takeover[aria-labelledby="client-harihar"] {padding-bottom:76px;min-height:650px;}
+  .takeover[aria-labelledby="client-harihar"] .v14-approval-art {min-height:490px;}
+}
+@media (min-width:801px) {
+  .takeover[aria-labelledby="client-harihar"] .media-stage.secondary.v14-papa-stage {
+    left:7%;right:auto;top:auto;bottom:4%;
+    width:min(34%,170px);
+    max-height:none;
+    transform:rotate(5deg);
+  }
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {max-height:245px;}
+}
+@media (min-width:521px) and (max-width:800px) {
+  .takeover[aria-labelledby="client-harihar"] {padding-bottom:62px;min-height:0;}
+  .takeover[aria-labelledby="client-harihar"] .v14-approval-art {min-height:430px;}
+  .takeover[aria-labelledby="client-harihar"] .media-stage.secondary.v14-papa-stage {
+    left:5%;right:auto;top:auto;bottom:5%;
+    width:min(37%,155px);
+    max-height:none;
+    transform:rotate(5deg);
+  }
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {max-height:205px;}
+}
+@media (max-width:520px) {
+  .takeover[aria-labelledby="client-harihar"] {padding-bottom:62px;min-height:0;}
+  .takeover[aria-labelledby="client-harihar"] .v14-approval-art {min-height:400px;}
+  .takeover[aria-labelledby="client-harihar"] .media-stage.secondary.v14-papa-stage {
+    left:3%;right:auto;top:auto;bottom:6%;
+    width:min(38%,142px);
+    max-height:none;
+    transform:rotate(5deg);
+  }
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {max-height:170px;}
+}
+.takeover[aria-labelledby="client-harihar"] .v14-brand-stage img,
+.takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {
+  object-fit:contain;
+  max-width:100%;
+  height:auto;
+}
