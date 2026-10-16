@@ -21,7 +21,8 @@ Never crop the campaign artwork.
     max-height:none;
     transform:rotate(5deg);
   }
-  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {max-height:245px;}
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage .video-surface,
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage video {max-height:245px;}
 }
 @media (min-width:521px) and (max-width:800px) {
   .takeover[aria-labelledby="client-harihar"] {padding-bottom:62px;min-height:0;}
@@ -32,7 +33,8 @@ Never crop the campaign artwork.
     max-height:none;
     transform:rotate(5deg);
   }
-  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {max-height:205px;}
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage .video-surface,
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage video {max-height:205px;}
 }
 @media (max-width:520px) {
   .takeover[aria-labelledby="client-harihar"] {padding-bottom:62px;min-height:0;}
@@ -43,10 +45,11 @@ Never crop the campaign artwork.
     max-height:none;
     transform:rotate(5deg);
   }
-  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {max-height:170px;}
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage .video-surface,
+  .takeover[aria-labelledby="client-harihar"] .v14-papa-stage video {max-height:170px;}
 }
 .takeover[aria-labelledby="client-harihar"] .v14-brand-stage img,
-.takeover[aria-labelledby="client-harihar"] .v14-papa-stage img {
+.takeover[aria-labelledby="client-harihar"] .v14-papa-stage video {
   object-fit:contain;
   max-width:100%;
   height:auto;

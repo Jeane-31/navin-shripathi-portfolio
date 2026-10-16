@@ -5,7 +5,8 @@
 .v14-approval-art .media-stage.primary.v14-brand-stage{position:absolute;left:25%;top:10%;right:auto;bottom:auto;width:min(68%,390px);max-height:none;padding:17px;border:2px solid #253028;border-radius:23px;box-shadow:17px 17px 0 #527341;transform:rotate(-5deg);animation:none;z-index:2}
 .v14-approval-art .v14-brand-stage img{display:block;width:auto;height:auto;max-width:100%;max-height:390px;object-fit:contain}
 .v14-approval-art .media-stage.secondary.v14-papa-stage{position:absolute;left:5%;top:auto;right:auto;bottom:6%;width:min(37%,215px);max-height:none;padding:12px;border:2px solid #253028;border-radius:20px;box-shadow:14px 14px 0 #527341;transform:rotate(4deg);animation:none;z-index:3}
-.v14-approval-art .v14-papa-stage img{display:block;width:auto;height:auto;max-width:100%;max-height:270px;object-fit:contain}
+.v14-approval-art .v14-papa-stage .video-surface{width:100%;max-height:270px;overflow:hidden;border-radius:10px}
+.v14-approval-art .v14-papa-stage video{display:block;width:100%;height:auto;max-width:100%;max-height:270px;object-fit:contain;border-radius:10px}
 .v14-brand-signatures{position:absolute;top:1%;right:0%;z-index:4;display:flex;align-items:center;gap:10px;max-width:65%;opacity:.24;filter:grayscale(1) sepia(.3);pointer-events:none}
 .v14-brand-signatures img{display:block;object-fit:contain;width:clamp(65px,7.2vw,110px);max-height:45px}
 .v14-brand-signatures span{display:block;width:1px;height:32px;background:#506545}
@@ -16,7 +17,7 @@
 .v14-approval-art .media-stage.primary.v14-brand-stage{left:24%;top:12%;width:min(66%,330px)}
 .v14-approval-art .v14-brand-stage img{max-height:325px}
 .v14-approval-art .media-stage.secondary.v14-papa-stage{left:3%;bottom:5%;width:min(40%,170px)}
-.v14-approval-art .v14-papa-stage img{max-height:220px}
+.v14-approval-art .v14-papa-stage .video-surface,.v14-approval-art .v14-papa-stage video{max-height:220px}
 .v14-brand-signatures{right:1%;top:0%;gap:5px}
 .v14-brand-signatures img{width:clamp(55px,13vw,88px);max-height:32px}
 }
@@ -26,7 +27,7 @@
 .v14-approval-art .media-stage.primary.v14-brand-stage{left:23%;top:11%;width:min(69%,285px);padding:11px}
 .v14-approval-art .v14-brand-stage img{max-height:300px}
 .v14-approval-art .media-stage.secondary.v14-papa-stage{left:0%;bottom:8%;width:min(42%,155px);padding:8px}
-.v14-approval-art .v14-papa-stage img{max-height:185px}
+.v14-approval-art .v14-papa-stage .video-surface,.v14-approval-art .v14-papa-stage video{max-height:185px}
 .v14-brand-signatures img{width:58px}
 .v14-approval-art .stage-caption{font-size:9.5px;max-width:180px;bottom:0}
 }
