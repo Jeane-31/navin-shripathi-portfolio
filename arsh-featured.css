@@ -149,10 +149,28 @@
 @keyframes arshSpin{to{transform:rotate(360deg)}}
 @keyframes arshCounterSpin{to{rotate:-360deg}}
 
-/* Actual Arsh logo artwork + the supplied three-tier placement funnel. */
-.arsh-brand-lockup{width:100%;min-height:112px;overflow:hidden}
-.arsh-official-logo-crop{position:relative;display:block;width:min(100%,300px);aspect-ratio:20/13;overflow:hidden;background:#fff;margin:auto;border-radius:12px}
-.arsh-official-logo-crop img{position:absolute;width:350%;height:auto;max-width:none;left:-212.5%;top:-70%;display:block}
+/* Exact supplied Arsh lockup. The full transparent canvas remains visible—no crop or redraw. */
+.arsh-brand-lockup{width:100%;min-height:0;overflow:visible}
+.arsh-logo-frame{
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:min(100%,320px);
+  aspect-ratio:1487/1058;
+  margin:auto;
+  overflow:visible;
+  border:1.5px solid #2f3940;
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 89% 16%,#f3a654 0 7px,transparent 7.5px),
+    radial-gradient(circle at 11% 84%,#a9d7e1 0 11px,transparent 11.5px),
+    linear-gradient(145deg,#fffdf8 12%,#f2fafb 64%,#fff0dc 100%);
+  box-shadow:8px 9px 0 #a9d7e1;
+}
+.arsh-logo-frame:before,.arsh-logo-frame:after{content:'';position:absolute;z-index:0;border-radius:99px;background:#2f3940;opacity:.13}
+.arsh-logo-frame:before{width:32px;height:4px;left:17px;top:17px}
+.arsh-logo-frame:after{width:4px;height:25px;right:18px;bottom:17px;background:#ef9940;opacity:.8}
+.arsh-logo-frame img{position:relative;z-index:1;display:block;width:100%;height:100%;max-width:none;object-fit:contain;object-position:center}
 .arsh-funnel{max-width:700px;gap:7px}
 .arsh-entry,.arsh-fit{width:76%;display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:center;padding:11px 15px;border:1.5px solid #2f3940;border-radius:16px;background:#fffdf8;box-shadow:5px 6px 0 #b4dce4}
 .arsh-entry>span,.arsh-fit>span{display:grid;place-items:center;width:34px;aspect-ratio:1;border-radius:50%;background:#2f3940;color:#fff;font:900 9px Manrope,sans-serif}
@@ -179,8 +197,10 @@
 .arsh-funnel--compact .arsh-tier>span{font-size:6px;margin-bottom:3px}.arsh-funnel--compact .arsh-tier>strong{font-size:10px}.arsh-funnel--compact .arsh-tier>small{display:none}
 .arsh-funnel--compact .arsh-tier-starter{box-shadow:3px 3px 0 #f3a654}
 .arsh-funnel--compact .arsh-branch{height:12px}.arsh-funnel--compact .arsh-branch:before{top:-4px}.arsh-funnel--compact .arsh-branch i{height:12px}
-.arsh-home-card .arsh-brand-lockup{min-height:76px}.arsh-home-card .arsh-official-logo-crop{width:230px}
-.arsh-identity-card .arsh-brand-lockup{margin:2px auto 8px}.arsh-identity-card .arsh-official-logo-crop{width:310px}
+.arsh-home-card .arsh-brand-lockup{margin:-4px auto 4px}.arsh-home-card .arsh-logo-frame{width:210px;border-radius:20px;box-shadow:6px 7px 0 #a9d7e1}
+.arsh-identity-card .arsh-brand-lockup{margin:2px auto 8px}.arsh-identity-card .arsh-logo-frame{width:360px}
+.arsh-library-logo .arsh-logo-frame{width:280px}
+.arsh-end-card .arsh-logo-frame{width:260px}
 .arsh-ownership-label{display:inline-flex;padding:8px 12px;border-radius:99px;background:#f3a654;color:#2f3940;font:900 10px Manrope,sans-serif;letter-spacing:.13em}
 .arsh-session-card{width:min(88%,470px);padding:32px;border:2px solid #2f3940;border-radius:34px;background:#fffdf8;box-shadow:13px 15px 0 #f3a654;text-align:center;transform:rotate(2deg)}
 .arsh-session-card>span{font:900 10px Manrope,sans-serif;letter-spacing:.18em;color:#bf6f26}.arsh-session-card>strong{display:block;font:900 clamp(74px,9vw,130px)/.9 Manrope,sans-serif;letter-spacing:-.09em;color:#2f3940}.arsh-session-card>p{margin:13px 0 24px;font:800 11px Manrope,sans-serif;letter-spacing:.13em;color:#69767d}.arsh-session-card>div{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap}.arsh-session-card i{font:900 9px Manrope,sans-serif;font-style:normal;padding:8px 10px;border-radius:99px;background:#e8f5f8}.arsh-session-card b{color:#ef9940}
@@ -196,10 +216,10 @@
   .arsh-funnel--full .arsh-tier-starter{width:80%}
 }
 @media(max-width:520px){
-  .arsh-home-card .arsh-official-logo-crop{width:190px}
-  .arsh-home-card .arsh-brand-lockup{min-height:61px}
+  .arsh-home-card .arsh-logo-frame{width:175px;border-radius:17px;box-shadow:5px 6px 0 #a9d7e1}
   .arsh-tier-options{gap:7px}.arsh-funnel--compact .arsh-tier>strong{font-size:8px}
-  .arsh-identity-card .arsh-official-logo-crop{width:250px}
+  .arsh-identity-card .arsh-logo-frame{width:270px;border-radius:21px}
+  .arsh-library-logo .arsh-logo-frame{width:235px}
   .arsh-session-card{padding:27px 18px;box-shadow:9px 11px 0 #f3a654;transform:none}
   .arsh-service-compare{gap:13px}
   .arsh-funnel--full .arsh-tier-options{grid-template-columns:1fr}.arsh-funnel--full .arsh-branch{display:none}
