@@ -67,14 +67,11 @@
 @media(max-width:520px){
 .home-hero.home-hero-editorial{padding:32px 5vw 40px;gap:18px}
 .home-hero-editorial .hero-words .tag{font-size:9px;padding:9px 11px;line-height:1.35}
-.home-hero-editorial .hero-words h1.approved-hero-title{width:100%;font-size:clamp(34px,10vw,49px);line-height:1.045;letter-spacing:-.07em;margin:19px 0 22px}
-.home-hero-editorial .approved-hero-title .approved-line{width:100%;max-width:none}
-.home-hero-editorial .approved-hero-title .approved-line-1,
-.home-hero-editorial .approved-hero-title .approved-line-2,
-.home-hero-editorial .approved-hero-title .approved-line-4{display:flex;align-items:baseline;justify-content:space-between;gap:.42em}
-.home-hero-editorial .approved-hero-title .approved-line-3{width:100%}
+.home-hero-editorial .hero-words h1.approved-hero-title{width:100%;font-size:clamp(36px,11.1vw,47px);line-height:1.01;letter-spacing:-.073em;margin:19px 0 22px}
+.home-hero-editorial .approved-hero-title .approved-line{width:fit-content;max-width:100%}
+.home-hero-editorial .approved-hero-title .approved-line-1{display:flex;align-items:baseline;justify-content:flex-start;gap:.16em}
 .home-hero-editorial .approved-hero-title .approved-3sec{font-size:1.11em}
-.home-hero-editorial .approved-hero-title .approved-line-4{font-size:.72em;white-space:nowrap;line-height:1.2;margin-top:14px}
+.home-hero-editorial .approved-hero-title .approved-line-4{display:block;font-size:.72em;white-space:nowrap;line-height:1.16;margin-top:16px}
 .home-hero-editorial .hero-words .lead{font-size:14.5px;line-height:1.5}
 .home-hero-editorial .hero-actions{gap:10px;margin-top:21px}
 .home-hero-editorial .hero-actions .btn{font-size:12px;padding:11px 12px}
@@ -90,7 +87,7 @@
 .home-hero-editorial .hero-visual-approved .hero-star{font-size:35px;left:3%;top:5%}
 .home-hero-editorial .hero-visual-approved .hero-bling{right:0;top:47%;width:22px}}
 @media(max-width:355px){
-.home-hero-editorial .hero-words h1.approved-hero-title{font-size:30px}
+.home-hero-editorial .hero-words h1.approved-hero-title{font-size:35px}
 .home-hero-editorial .approved-hero-title .approved-line-4{font-size:.67em}
 .home-hero-editorial .hero-visual-approved .floating-sticky{font-size:9px;max-width:110px}}
 @media(prefers-reduced-motion:reduce){.home-hero-editorial .hero-doodle,.home-hero-editorial .hero-star{animation:none}}
