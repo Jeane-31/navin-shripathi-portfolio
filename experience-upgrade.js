@@ -10,14 +10,15 @@ const categoryOf=c=>/Education|Edtech|Career Services/i.test(c.category)?'Educat
 
 class SoundDirector{
   constructor(){
-    this.mode=storage.get('navin-sound-mode',storage.get('navin-v3-sound')==='yes'?'full':'off');
-    this.volume=Math.max(.2,Math.min(1,Number(storage.get('navin-sound-volume','.68'))||.68));
-    this.ctx=null;this.master=null;this.lastHover=0;this.scrollStep=0;
+    const remembered=storage.get('navin-sound-mode',storage.get('navin-v3-sound')==='yes'?'full':'off');
+    this.mode=remembered==='off'?'off':'full';
+    this.volume=Math.max(.68,Math.min(1,Number(storage.get('navin-sound-volume','.68'))||.68));
+    this.ctx=null;this.master=null;this.lastHover=0;this.scrollStep=0;this.pulseTimer=null;
   }
   ensure(){
     if(!this.ctx){
       const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
-      this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=this.volume*.15;
+      this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=this.volume*.30;
       const compressor=this.ctx.createDynamicsCompressor();compressor.threshold.value=-16;compressor.knee.value=18;compressor.ratio.value=5;compressor.attack.value=.003;compressor.release.value=.2;
       this.master.connect(compressor);compressor.connect(this.ctx.destination);
     }
@@ -32,6 +33,7 @@ class SoundDirector{
   tone(freq=520,duration=.09,opts={}){
     if(this.mode==='off'&&!opts.force)return;
     const out=this.output(opts.pan||0);if(!out)return;
+    clearTimeout(this.pulseTimer);body.classList.add('sound-pulse');this.pulseTimer=setTimeout(()=>body.classList.remove('sound-pulse'),100);
     const now=this.ctx.currentTime,o=this.ctx.createOscillator(),g=this.ctx.createGain();
     o.type=opts.type||'sine';o.frequency.setValueAtTime(freq,now);if(opts.to)o.frequency.exponentialRampToValueAtTime(Math.max(40,opts.to),now+duration);
     const level=opts.level||.15;g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(level,now+(opts.attack||.008));g.gain.exponentialRampToValueAtTime(.0001,now+duration);
@@ -49,8 +51,7 @@ class SoundDirector{
     notes.forEach((n,i)=>setTimeout(()=>this.tone(n,.18,{type:i===1?'triangle':'sine',level:.09,pan:(i-1)*.34,force}),i*82));
     reactMascot('heard that ✳');
   }
-  setMode(mode){this.mode=mode;storage.set('navin-sound-mode',mode);storage.set('navin-v3-sound',mode==='off'?'no':'yes');syncSoundUI();if(mode!=='off')this.click(true)}
-  setVolume(value){this.volume=Math.max(.2,Math.min(1,Number(value)));storage.set('navin-sound-volume',this.volume);if(this.master)this.master.gain.setTargetAtTime(this.volume*.15,this.ctx.currentTime,.02)}
+  setMode(mode){this.mode=mode==='off'?'off':'full';storage.set('navin-sound-mode',this.mode);storage.set('navin-v3-sound',this.mode==='off'?'no':'yes');syncSoundUI();if(this.mode==='full')this.click(true)}
 }
 const sounds=new SoundDirector();window.NavinSound=sounds;
 
@@ -66,7 +67,7 @@ function buildMascot(){
   }else{
     const wrap=document.createElement('div');wrap.className='page-mascot';wrap.innerHTML=`<button type="button" class="page-mascot-face" aria-label="${escapeHTML(role)}. Play this page’s sound."><span class="mini-eyes">◉ ◉</span><span class="mini-mouth">${escapeHTML(line)}</span></button><span class="page-mascot-role">${escapeHTML(role)}</span><span class="mascot-bubble" aria-live="polite"></span>`;body.appendChild(wrap);mascot=$('.page-mascot-face',wrap);mascotBubble=$('.mascot-bubble',wrap);
   }
-  mascot?.addEventListener('click',()=>{sounds.signature(slug||page,true);wakeMascot('my tiny theme song.');});
+  mascot?.addEventListener('click',()=>{if(sounds.mode==='off'){wakeMascot('sound is off — switch it on up top.');return}sounds.signature(slug||page);wakeMascot('my tiny theme song.');});
   mascot?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();mascot.click()}});
   resetIdle();
   ['pointerdown','keydown','scroll'].forEach(event=>window.addEventListener(event,resetIdle,{passive:true}));
@@ -76,31 +77,21 @@ function sayMascot(text){if(!mascotBubble&&mascot){mascotBubble=document.createE
 function wakeMascot(text){if(!mascot)return;resetIdle();mascot.classList.add('is-reacting');sayMascot(text);setTimeout(()=>mascot?.classList.remove('is-reacting'),520)}
 function reactMascot(text='nice sound choice.'){wakeMascot(text)}
 
-function buildSoundStudio(){
+function buildSoundToggle(){
   const old=$('#sound-toggle');if(!old)return;
-  const button=old.cloneNode(true);old.replaceWith(button);button.textContent='♫ Sound studio';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded','false');
-  const panel=document.createElement('div');panel.className='sound-studio';panel.id='sound-studio';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Sound controls');panel.hidden=true;
-  panel.innerHTML=`<div class="sound-studio-head"><div><span>Sound studio</span><small>Every cue, still under your control.</small></div><button type="button" class="sound-close" aria-label="Close sound controls">×</button></div><div class="sound-modes" role="group" aria-label="Sound amount"><button type="button" data-sound-mode="off">Quiet</button><button type="button" data-sound-mode="actions">Actions</button><button type="button" data-sound-mode="full">Full world</button></div><label class="sound-volume">Volume <input type="range" min="20" max="100" step="1" value="${Math.round(sounds.volume*100)}"><output>${Math.round(sounds.volume*100)}%</output></label><button type="button" class="sound-preview">Preview this world <span>↗</span></button><p>Full world adds soft scroll ticks, hover notes and spatial card swishes. Reels keep their own sound button.</p>`;
-  body.appendChild(panel);
-  const toggle=open=>{panel.hidden=!open;button.setAttribute('aria-expanded',String(open));if(open)$('.sound-close',panel).focus()};
-  button.addEventListener('click',e=>{e.stopPropagation();toggle(panel.hidden)});$('.sound-close',panel).addEventListener('click',()=>toggle(false));
-  $$('[data-sound-mode]',panel).forEach(b=>b.addEventListener('click',()=>sounds.setMode(b.dataset.soundMode)));
-  const range=$('input[type="range"]',panel),out=$('output',panel);range.addEventListener('input',()=>{sounds.setVolume(range.value/100);out.value=range.value+'%'});range.addEventListener('change',()=>sounds.click(true));
-  $('.sound-preview',panel).addEventListener('click',()=>sounds.signature(slug||page,true));
-  document.addEventListener('click',e=>{if(!panel.hidden&&!panel.contains(e.target)&&e.target!==button)toggle(false)});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)toggle(false)});
+  const button=old.cloneNode(true);old.replaceWith(button);button.removeAttribute('aria-haspopup');button.removeAttribute('aria-expanded');
+  button.addEventListener('click',()=>{const turnOn=sounds.mode==='off';sounds.setMode(turnOn?'full':'off');wakeMascot(turnOn?'full sound. full personality.':'quiet mode activated.')});
   syncSoundUI();
 }
 function syncSoundUI(){
-  const button=$('#sound-toggle'),panel=$('#sound-studio');if(button){button.dataset.mode=sounds.mode;button.textContent=sounds.mode==='off'?'♩ Sound off':sounds.mode==='actions'?'♪ Actions on':'♫ Full sound';button.setAttribute('aria-label','Open sound controls. '+button.textContent)}
-  if(panel)$$('[data-sound-mode]',panel).forEach(b=>{const on=b.dataset.soundMode===sounds.mode;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
+  const button=$('#sound-toggle'),on=sounds.mode==='full';body.classList.toggle('sound-is-on',on);if(button){button.dataset.mode=sounds.mode;button.textContent=on?'♫ Sound on':'♩ Sound off';button.setAttribute('aria-label',on?'Turn full sound off':'Turn full sound on');button.setAttribute('aria-pressed',String(on))}
 }
 
 function bindGlobalSounds(){
   let lastY=scrollY,lastTickY=scrollY;
   window.addEventListener('scroll',()=>{const y=scrollY;if(Math.abs(y-lastTickY)>=145){sounds.scroll(y>lastY?1:-1);lastTickY=y}lastY=y},{passive:true});
   document.addEventListener('portfolio:deckchange',e=>sounds.swipe(Math.sign(e.detail?.delta||1)));
-  document.addEventListener('click',e=>{const target=e.target.closest('a,button,[role="button"],input[type="range"]');if(!target||target.closest('.sound-studio')||target.id==='sound-toggle'||target.closest('.main-character,.page-mascot'))return;sounds.click()});
+  document.addEventListener('click',e=>{const target=e.target.closest('a,button,[role="button"]');if(!target||target.id==='sound-toggle'||target.closest('.main-character,.page-mascot'))return;sounds.click()});
   document.addEventListener('pointerover',e=>{const target=e.target.closest('a,button,.shuffle-card,.library-tile');if(target&&!target.contains(e.relatedTarget))sounds.hover()});
   document.addEventListener('portfolio:legacy-chime',e=>{if(sounds.mode!=='off')sounds.tone(e.detail?.frequency||520,.08,{to:(e.detail?.frequency||520)*1.12,level:.06})});
 }
@@ -116,7 +107,7 @@ function buildVisitorRoutes(){
   const section=document.createElement('section');section.className='visitor-routes';section.setAttribute('aria-labelledby','route-title');
   section.innerHTML=`<div class="route-intro"><span class="eyebrow">Choose your own way in</span><h2 id="route-title">What brought you here?</h2><p>The same portfolio, edited around the question already in your head.</p></div><div class="route-choices">${Object.entries(visitorRoutes).map(([key,r])=>`<button type="button" data-route="${key}">${escapeHTML(r.label)} <span>↗</span></button>`).join('')}</div><div class="route-result" aria-live="polite"></div>`;
   hero.insertAdjacentElement('afterend',section);
-  const show=key=>{const r=visitorRoutes[key]||visitorRoutes.browse;storage.set('navin-visitor-route',key);$$('[data-route]',section).forEach(b=>{const on=b.dataset.route===key;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});$('.route-result',section).innerHTML=`<div><span>${escapeHTML(r.label)}</span><h3>${escapeHTML(r.title)}</h3><p>${escapeHTML(r.body)}</p></div><nav aria-label="Recommended route">${r.links.map(([label,url])=>`<a href="${url}">${escapeHTML(label)} <span>↗</span></a>`).join('')}</nav>`;wakeMascot('route recalculated.');sounds.signature(key)};
+  const show=key=>{const r=visitorRoutes[key]||visitorRoutes.browse,result=$('.route-result',section);storage.set('navin-visitor-route',key);$$('[data-route]',section).forEach(b=>{const on=b.dataset.route===key;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});result.innerHTML=`<div><span>${escapeHTML(r.label)}</span><h3>${escapeHTML(r.title)}</h3><p>${escapeHTML(r.body)}</p></div><nav aria-label="Recommended route">${r.links.map(([label,url])=>`<a href="${url}">${escapeHTML(label)} <span>↗</span></a>`).join('')}</nav>`;result.classList.remove('route-refresh');void result.offsetWidth;result.classList.add('route-refresh');wakeMascot('route recalculated.');sounds.signature(key)};
   $$('[data-route]',section).forEach(b=>b.addEventListener('click',()=>show(b.dataset.route)));show(storage.get('navin-visitor-route','browse'));
 }
 
@@ -173,9 +164,24 @@ function scrollMemory(){
   let timer;addEventListener('scroll',()=>{clearTimeout(timer);timer=setTimeout(()=>storage.set(key,Math.round(scrollY)),180)},{passive:true});
 }
 
+function buildMotionLayer(){
+  if(reduceMotion.matches)return;
+  const progress=document.createElement('div');progress.className='experience-scroll-progress';progress.setAttribute('aria-hidden','true');body.appendChild(progress);
+  let scrollFrame=0;const syncScroll=()=>{scrollFrame=0;const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);progress.style.setProperty('--scroll-progress',String(Math.min(1,scrollY/max)))};addEventListener('scroll',()=>{if(!scrollFrame)scrollFrame=requestAnimationFrame(syncScroll)},{passive:true});syncScroll();
+  const revealTargets=$$('.visitor-routes>* ,.takeover-copy,.takeover-art,.library-tile,.universe-cluster,.about-grid>* ,.contact-card>* ,.story-panel .scene-copy,.story-panel .scene-art');
+  revealTargets.forEach((el,i)=>{el.classList.add('xp-reveal');el.style.setProperty('--reveal-delay',(i%6)*55+'ms')});
+  if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('xp-visible');observer.unobserve(entry.target)}}),{threshold:.08,rootMargin:'0px 0px -7%'});revealTargets.forEach(el=>observer.observe(el))}else revealTargets.forEach(el=>el.classList.add('xp-visible'));
+  const hero=$('.hero-visual');if(hero){hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();hero.style.setProperty('--xp-x',((e.clientX-r.left)/r.width-.5).toFixed(3));hero.style.setProperty('--xp-y',((e.clientY-r.top)/r.height-.5).toFixed(3))});hero.addEventListener('pointerleave',()=>{hero.style.setProperty('--xp-x','0');hero.style.setProperty('--xp-y','0')})}
+  $$('.takeover').forEach(section=>{section.addEventListener('pointermove',e=>{const r=section.getBoundingClientRect();section.style.setProperty('--world-x',((e.clientX-r.left)/r.width-.5).toFixed(3));section.style.setProperty('--world-y',((e.clientY-r.top)/r.height-.5).toFixed(3))});section.addEventListener('pointerleave',()=>{section.style.setProperty('--world-x','0');section.style.setProperty('--world-y','0')})});
+  $$('.btn,.feature-link,.deck-surprise').forEach(el=>{el.classList.add('xp-magnetic');el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();el.style.setProperty('--mag-x',((e.clientX-r.left-r.width/2)*.10)+'px');el.style.setProperty('--mag-y',((e.clientY-r.top-r.height/2)*.16)+'px')});el.addEventListener('pointerleave',()=>{el.style.setProperty('--mag-x','0px');el.style.setProperty('--mag-y','0px')})});
+  $$('.contact-sheet-card,[data-client-node]').forEach((el,i)=>el.style.setProperty('--motion-index',String(i%12)));
+  const orb=document.createElement('span');orb.className='experience-cursor-orb';orb.setAttribute('aria-hidden','true');body.appendChild(orb);let pointerFrame=0,px=-80,py=-80;addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;if(!pointerFrame)pointerFrame=requestAnimationFrame(()=>{pointerFrame=0;orb.style.translate=`${px}px ${py}px`})},{passive:true});
+  document.addEventListener('click',e=>{if(!e.target.closest('a,button,[role="button"]'))return;const burst=document.createElement('span');burst.className='experience-burst';burst.style.left=e.clientX+'px';burst.style.top=e.clientY+'px';burst.innerHTML='<i></i><i></i><i></i><i></i><i></i><i></i>';body.appendChild(burst);setTimeout(()=>burst.remove(),720)});
+}
+
 function finishLoading(){document.documentElement.classList.remove('experience-loading');document.documentElement.classList.add('experience-ready')}
 function init(){
-  buildMascot();buildSoundStudio();bindGlobalSounds();buildVisitorRoutes();enhanceDecks();buildUniverseMap();clientThemes();animatedFavicon();installTransitions();copyEmailPersonality();scrollMemory();
+  buildMascot();buildSoundToggle();bindGlobalSounds();buildVisitorRoutes();enhanceDecks();buildUniverseMap();clientThemes();animatedFavicon();installTransitions();copyEmailPersonality();scrollMemory();buildMotionLayer();
   requestAnimationFrame(()=>setTimeout(finishLoading,220));
 }
 if(document.readyState==='complete')setTimeout(init,0);else addEventListener('load',init,{once:true});
