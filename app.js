@@ -1,6 +1,8 @@
 (()=>{'use strict';
 const db=window.PORTFOLIO_DATA;if(!db)return;
 const page=document.body.dataset.page||'home',slug=document.body.dataset.slug||'',root=document.body.dataset.root||'./';
+document.documentElement.classList.add('experience-loading');
+const experienceStyles=document.createElement('link');experienceStyles.rel='stylesheet';experienceStyles.href=root+'experience-upgrade.css';document.head.appendChild(experienceStyles);
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clientMap=Object.fromEntries(db.clients.map(c=>[c.slug,c]));
@@ -10,9 +12,9 @@ const src=k=>db.assets[k]?root+db.assets[k].src:'';
 const email=db.personal.email||'nnshri2000@gmail.com';
 const assetExists=k=>!!db.assets[k];
 const chips=(vals=[],className='pill')=>vals.map(x=>`<span class="${className}">${esc(x)}</span>`).join('');
-let sound=false,audio=null;
+let sound=false;
 try{sound=localStorage.getItem('navin-v3-sound')==='yes'}catch(e){}
-function chime(n=520){if(!sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const now=audio.currentTime;const o=audio.createOscillator(),g=audio.createGain();o.type='sine';o.frequency.setValueAtTime(n,now);o.frequency.exponentialRampToValueAtTime(n*1.22,now+.05);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.018,now+.012);g.gain.exponentialRampToValueAtTime(.0001,now+.105);o.connect(g);g.connect(audio.destination);o.start(now);o.stop(now+.11)}catch(e){}}
+function chime(n=520){document.dispatchEvent(new CustomEvent('portfolio:legacy-chime',{detail:{frequency:n}}))}
 const isVideo=k=>db.assets[k]&&db.assets[k].kind==='reel';
 // All reel surfaces autoplay silently, loop and play inline. On desktop, audio is
 // temporarily enabled on hover; touch devices have an explicit sound button.
@@ -168,6 +170,7 @@ function bindShuffleDecks(){
     const live=deck.parentElement.querySelector('.shuffle-announcement');
     const count=cards.length;
     let current=0,activeVideo=null,visible=false,moving=false,down=null,suppressClickUntil=0;
+    try{const remembered=Number(localStorage.getItem('navin-card-memory-'+deck.dataset.client));if(Number.isInteger(remembered))current=((remembered%count)+count)%count}catch(e){}
     const cardAt=i=>cards[(i+count)%count];
     function stopVideo(){
       deck.classList.remove('is-audible');
@@ -205,6 +208,8 @@ function bindShuffleDecks(){
       deck.parentElement.querySelectorAll('.shuffle-progress-dot').forEach((dot,i)=>dot.classList.toggle('is-active',i===current));
       const a=db.assets[cardAt(current).dataset.asset];
       if(live)live.textContent='Showing '+(a?.title||'creative work')+'. Swipe to view another.';
+      deck.dataset.current=String(current);
+      try{localStorage.setItem('navin-card-memory-'+deck.dataset.client,String(current))}catch(e){}
     }
     function startFront(){
       stopVideo();
@@ -234,6 +239,7 @@ function bindShuffleDecks(){
       if(!reduceMotion.matches)outgoing.classList.add(flingClass);
       current=(current+delta+count)%count;
       paint();
+      deck.dispatchEvent(new CustomEvent('portfolio:deckchange',{bubbles:true,detail:{client:deck.dataset.client,index:current,count,delta}}));
       window.setTimeout(()=>{
         outgoing.classList.remove(flingClass);
         moving=false;
@@ -302,6 +308,13 @@ function bindShuffleDecks(){
       else if(e.key==='ArrowRight'){e.preventDefault();change(-1)}
       else if(e.key==='Enter'||e.key===' '){e.preventDefault();if(activeVideo)setAudio(activeVideo.muted)}
     });
+    deck.addEventListener('portfolio:deck-to',e=>{
+      const target=Number(e.detail?.index);
+      if(!Number.isInteger(target)||target<0||target>=count||target===current)return;
+      let delta=(target-current+count)%count;
+      if(delta>count/2)delta-=count;
+      change(delta);
+    });
     document.addEventListener('visibilitychange',()=>{
       if(document.hidden)stopVideo();else if(visible&&!moving)startFront();
     });
@@ -327,4 +340,5 @@ function bindReelPlayback(){
 function bindGallery(){let lastFocus=null;document.addEventListener('click',e=>{const b=e.target.closest('.js-open-art');if(!b)return;const k=b.dataset.asset,a=db.assets[k];if(!a)return;chime(690);lastFocus=b;let rootDlg=$('#dialog-root');rootDlg.innerHTML=`<div class="gallery-dialog" role="presentation"><div class="modal-inner" role="dialog" aria-modal="true" aria-label="Original artwork viewer" tabindex="-1"><div class="modal-top"><strong>Original composition · 100% visible</strong><button class="js-close-art" type="button" aria-label="Close artwork">×</button></div><div class="modal-work">${mediaFull(k)}</div><div class="modal-caption">${esc(a.title)} ${!isVideo(k)&&a.date?'· '+esc(a.date):''}</div></div></div>`;document.body.style.overflow='hidden';$('.modal-inner').focus()});document.addEventListener('click',e=>{if(e.target.classList.contains('js-close-art')||e.target.classList.contains('gallery-dialog'))closeModal()});document.addEventListener('keydown',e=>{const v=e.target.closest('video.js-open-art');if(v&&(e.key==='Enter'||e.key===' ')){e.preventDefault();v.click()}});document.addEventListener('keydown',e=>{if(!$('#dialog-root').firstElementChild)return;if(e.key==='Escape'){e.preventDefault();closeModal()}else if(e.key==='Tab'){const b=$('.js-close-art');if(b){e.preventDefault();b.focus()}}});function closeModal(){const v=$('.modal-work video');if(v){v.muted=true;v.pause()}$('#dialog-root').replaceChildren();document.body.style.overflow='';if(lastFocus)lastFocus.focus();lastFocus=null}}
 function bindMotion(){const reduced=matchMedia('(prefers-reduced-motion: reduce)');const narrow=matchMedia('(max-width: 800px)');let rails=[];let ticking=false;function isActive(){return !reduced.matches&&!narrow.matches}function setup(){rails=$$('.js-horizontal').map(shell=>{const track=shell.querySelector('.story-track'),panels=[...shell.querySelectorAll('.story-panel')],stage=shell.querySelector('.story-sticky');return{shell,track,panels,stage,active:0,progress:0,span:1,travel:1}});layout();update()}function layout(){const enabled=isActive();rails.forEach(r=>{if(!enabled){r.shell.style.height='';r.track.style.transform='';r.panels.forEach(p=>p.setAttribute('data-active','true'));return}r.travel=window.innerWidth*(r.panels.length-1);r.span=Math.max(1,r.travel*.82);r.shell.style.height=(r.stage.getBoundingClientRect().height+r.span)+'px'})}function update(){if(!isActive())return;rails.forEach(r=>{const rect=r.shell.getBoundingClientRect(),progress=Math.max(0,Math.min(1,-rect.top/r.span));r.progress=progress;r.track.style.transform=`translate3d(${-r.travel*progress}px,0,0)`;const index=Math.max(0,Math.min(r.panels.length-1,Math.round(progress*(r.panels.length-1))));if(index!==r.active){r.active=index;chime(420+index*45)}r.panels.forEach((p,i)=>p.setAttribute('data-active',String(i===index)));r.shell.querySelectorAll('.js-jump').forEach((b,i)=>{b.classList.toggle('on',i===index);b.setAttribute('aria-current',i===index?'step':'false')});const lab=r.shell.querySelector('.js-scene-label');if(lab)lab.textContent=`${String(index+1).padStart(2,'0')} / ${String(r.panels.length).padStart(2,'0')}`})}function request(){if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;update()})}function jump(r,index){index=Math.max(0,Math.min(r.panels.length-1,index));if(isActive()){const y=window.scrollY+r.shell.getBoundingClientRect().top+r.span*(index/(r.panels.length-1));window.scrollTo({top:y,behavior:'smooth'})}else{r.panels[index].scrollIntoView({block:'start',behavior:reduced.matches?'auto':'smooth'})}chime(580)}setup();rails.forEach(r=>{r.shell.querySelectorAll('.js-jump').forEach(b=>b.addEventListener('click',()=>jump(r,+b.dataset.jump)));r.shell.querySelector('.js-prev')?.addEventListener('click',()=>jump(r,r.active-1));r.shell.querySelector('.js-next')?.addEventListener('click',()=>jump(r,r.active+1));r.shell.addEventListener('keydown',e=>{if(document.activeElement!==r.shell)return;if(e.key==='ArrowRight'){e.preventDefault();jump(r,r.active+1)}if(e.key==='ArrowLeft'){e.preventDefault();jump(r,r.active-1)}})});window.addEventListener('scroll',request,{passive:true});window.addEventListener('resize',()=>{layout();request()},{passive:true});reduced.addEventListener?.('change',()=>{layout();request()});narrow.addEventListener?.('change',()=>{layout();request()});window.addEventListener('load',()=>{layout();update()});if(document.fonts?.ready)document.fonts.ready.then(()=>{layout();update()});if(!reduced.matches&&'IntersectionObserver' in window){document.body.classList.add('motion-ready');const ob=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('revealed');ob.unobserve(x.target)}}),{threshold:.06});$$('.reveal-on-scroll').forEach(x=>ob.observe(x))}}
 header();footer();if(page==='home')home();else if(page==='case'){const c=clientMap[slug];$('#main').innerHTML=c?clientStory(c):'<div class="container section-pad"><h1>That chapter wandered off.</h1><a class="btn" href="../library.html">Back to the library</a></div>';}else if(page==='library')library();else if(page==='method')methodPage();else if(page==='about')about();else if(page==='contact')contact();bindGallery();bindMotion();bindReelPlayback();bindShuffleDecks();
+const experienceScript=document.createElement('script');experienceScript.src=root+'experience-upgrade.js';document.body.appendChild(experienceScript);
 })();
