@@ -20,10 +20,11 @@
 }
 @media(max-width:520px){
   .home-hero-editorial .approved-hero-title .hero-crafted-arrow {
-    left:calc(100% + .02em);
-    top:.06em;
-    width:65px;
-    height:54px;
+    left:auto;
+    right:9%;
+    top:.02em;
+    width:72px;
+    height:59px;
   }
   .home-hero-editorial .approved-hero-title .hero-crafted-arrow path {stroke-width:3.2px}
 }
