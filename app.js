@@ -1,6 +1,15 @@
 (()=>{'use strict';
 const db=window.PORTFOLIO_DATA;if(!db)return;
 const page=document.body.dataset.page||'home',slug=document.body.dataset.slug||'',root=document.body.dataset.root||'./';
+// Vercel Web Analytics: one shared tracker covers every portfolio page.
+window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
+if(!document.querySelector('script[data-vercel-analytics]')){
+  const analyticsScript=document.createElement('script');
+  analyticsScript.defer=true;
+  analyticsScript.src='/_vercel/insights/script.js';
+  analyticsScript.dataset.vercelAnalytics='true';
+  document.head.appendChild(analyticsScript);
+}
 document.documentElement.classList.add('experience-loading');
 const experienceStyles=document.createElement('link');experienceStyles.rel='stylesheet';experienceStyles.href=root+'experience-upgrade.css';document.head.appendChild(experienceStyles);
 if(!document.querySelector('link[href$="arsh-featured.css"]')){const refinementStyles=document.createElement('link');refinementStyles.rel='stylesheet';refinementStyles.href=root+'arsh-featured.css';document.head.appendChild(refinementStyles)}
